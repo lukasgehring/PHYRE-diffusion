@@ -58,3 +58,6 @@ You can modify the diffusion strength by updating the `start` and `end` paramete
 
 ### Loss Functions
 You can add more loss functions to the `noise_estimation_loss()` function in `diffusion.py`.
+
+## Google Colab
+You can find a colab notebook for experimenting with the project here: https://colab.research.google.com/drive/1GpSjZZeqIRrmr7HBAZa70YfDl3O2kLCZ?usp=sharing
