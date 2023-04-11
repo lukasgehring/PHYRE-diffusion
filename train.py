@@ -15,6 +15,9 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # PARAMETERS
 #-----------------------------------------------
 
+# VAE name
+VAE_name = "conv_vae64_1_epochs"
+
 # diffusion steps
 num_steps = 51
 
@@ -59,7 +62,7 @@ posterior_log_variance_clipped = torch.log(
     torch.cat((posterior_variance[1].view(1, 1), posterior_variance[1:].view(-1, 1)), 0)).view(-1)
 
 # load environment model
-env_encoder = torch.load('ConVAE/trained-models/conv_vae64_1_epochs.pt')
+env_encoder = torch.load(f'ConVAE/trained-models/{VAE_name}.pt')
 env_encoder.eval()
 
 # load environment

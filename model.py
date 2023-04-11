@@ -70,10 +70,7 @@ class ConditionalLinear(nn.Module):
 
     def forward(self, x, s, t, z, sp=None, ep=None):
 
-        # t: timestep batchsize x sliding_window
-        # s: diffusion step batchsize x 1
-
-        if sp == None:
+        if sp is None:
             x = torch.cat((x, s, t, z), axis=1)
         else:
             x = torch.cat((x, s, t, sp, ep, z), axis=1)
@@ -84,24 +81,25 @@ class ConditionalLinear(nn.Module):
 
 
 class ConditionalModel(nn.Module):
-    def __init__(self, sliding_window, enc_chs=(3, 8, 16, 32, 64, 64), use_start_end_points=True, use_sin_cos_t=False):
+    def __init__(self, sliding_window, use_start_end_points=True, use_sin_cos_t=False):
         super(ConditionalModel, self).__init__()
 
+        # parameters
         self.use_start_end_points = use_start_end_points
         self.use_sin_cos_t = use_sin_cos_t
+        self.sliding_window = sliding_window * 2
 
-        # number of paramters: t + s + z
+        # calculate number of parameters: t + s + z
         conditional_parameter_size = sliding_window + 1 + 64
 
-        # t is inserted 2x (sin and cos)
         if use_sin_cos_t:
+            # t is inserted 2x (sin and cos)
             conditional_parameter_size += sliding_window
 
-        # add 4 points of start and end points are used
         if use_start_end_points:
+            # add 4 points of start and end points are used
             conditional_parameter_size += 4
 
-        self.sliding_window = sliding_window * 2
         self.lin1 = ConditionalLinear(self.sliding_window + conditional_parameter_size, 1024)
         self.lin2 = ConditionalLinear(1024 + conditional_parameter_size, 1024)
         self.lin3 = ConditionalLinear(1024 + conditional_parameter_size, 512)
@@ -110,6 +108,13 @@ class ConditionalModel(nn.Module):
         self.out = nn.Linear(128, self.sliding_window)
 
     def forward(self, x, s, t, sp, ep, z):
+
+        # x: trajectory points of the sliding window
+        # s: diffusion step
+        # t: trajectory step
+        # sp: start point of the trajectory
+        # ep: start point of the trajectory
+        # z: latent space representation of the environment
 
         x = torch.reshape(x, (-1, self.sliding_window))
         s = s.reshape(-1, 1)

@@ -7,26 +7,32 @@ from torch.utils.data import DataLoader
 from ConVAE.ConVAE import ConvVAE
 from ConVAE.loader import EnvironmentDataset, ToTensor
 
-# -------------------------------------
-# PARAMETERS
-# -------------------------------------
 
 # load the model
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+# -------------------------------------
+# PARAMETERS
+# -------------------------------------
+
 # set environment paramerts
 redball = False
+
+# set learning parameters
+lr = 0.001
+epochs = 500
+batch_size = 16
+
+# -------------------------------------
+# PARAMETERS END
+# -------------------------------------
+
 if redball:
     input_channels = 4
 else:
     input_channels = 3
 
 model = ConvVAE(image_channels=input_channels).to(device)
-
-# set learning parameters
-lr = 0.001
-epochs = 1
-batch_size = 16
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
 # show summary of the model
