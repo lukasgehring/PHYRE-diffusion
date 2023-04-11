@@ -90,7 +90,7 @@ class PHYREDataset(Dataset):
                             env[3, env_image == 1] = 1
 
                         # resize env
-                        env_data = transforms.Resize((64, 64))(torch.from_numpy(env)).view(-1, img_channels, 64, 64)
+                        env_data = transforms.Resize((64, 64), antialias=True)(torch.from_numpy(env)).view(-1, img_channels, 64, 64)
 
                         # latent vector from Conv-VAE
                         z = lantent_representation(self.env_encoder, env_data, self.device).view(64)
